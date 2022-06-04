@@ -2,7 +2,7 @@
 
 import express from "express"
 import {listAll, listFromTo, test} from "./import";
-import {addCode, addValidity, checkCode, codeInit, customAll, testValidity} from "./codes";
+import {addCode, addIdToAll, addValidity, checkCode, codeInit, customAll, testValidity} from "./codes";
 import cors from "cors";
 
 const app = express()
@@ -55,9 +55,6 @@ app.route(`/code/:post_id`)
             res.send({isSuccess: false, error_code: 1});
         }
     })
-
-codeInit();
-
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)

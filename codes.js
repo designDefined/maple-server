@@ -52,3 +52,20 @@ export const codeInit = () => {
     fs.writeFileSync('database/codes.json', JSON.stringify(newData));
     return "success"
 }
+
+export const addIdToCode = (codes, order) => {
+    return codes.map((code, index) => {
+        return {...code, code_id: order * 100 + index}
+    })
+}
+
+export const addIdToAll = () => {
+    const newData = data.map((item) => {
+        const source = original.find((origin) => {
+            return origin.post_id === item.post_id
+        })
+        return {...item, codes: addIdToCode(item.codes, source.order)}
+    })
+    fs.writeFileSync('database/codes.json', JSON.stringify(newData));
+    return "success"
+}
