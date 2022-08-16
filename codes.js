@@ -26,6 +26,34 @@ export const addCode = (id, newCode, newTheme) => {
     return "error";
 }
 
+export const addTheme = (id, newTheme) => {
+    const index = data.findIndex((item) => item.post_id === id);
+    if (index < 0) {
+        return false;
+    } else {
+        data[index].themes.push(newTheme);
+        fs.writeFileSync('database/codes.json', JSON.stringify(data));
+        return data;
+    }
+    return "error";
+}
+
+export const deleteTheme = (id, themeToDelete) => {
+    const index = data.findIndex((item) => item.post_id === id);
+    if (index < 0) {
+        return false;
+    } else {
+        const indexToDelete = data[index].themes.findIndex((item) => item === themeToDelete);
+        if (indexToDelete !== -1) {
+            data[index].themes.splice(indexToDelete, 1);
+        }
+        fs.writeFileSync('database/codes.json', JSON.stringify(data));
+        return data;
+    }
+    return "error";
+}
+
+
 export const addValidity = (id, newValidity) => {
     const index = data.findIndex((item) => item.post_id === id);
     if (index < 0) {
@@ -68,4 +96,16 @@ export const addIdToAll = () => {
     })
     fs.writeFileSync('database/codes.json', JSON.stringify(newData));
     return "success"
+}
+
+
+export const jsonToCSV = () => {
+    const newData = [];
+    for (let i = 0; i < data.length; i++) {
+        const data_code = data[i].codes;
+        for (let j = 0; j < data_code.length; j++) {
+            newData.push(data_code[j]);
+        }
+    }
+    fs.writeFileSync('database/codes_export.json', JSON.stringify(newData));
 }

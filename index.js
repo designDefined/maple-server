@@ -2,7 +2,17 @@
 
 import express from "express"
 import {listAll, listFromTo, test} from "./import";
-import {addCode, addIdToAll, addValidity, checkCode, codeInit, customAll, testValidity} from "./codes";
+import {
+    addCode,
+    addIdToAll,
+    addTheme,
+    addValidity,
+    checkCode,
+    codeInit,
+    customAll, deleteTheme,
+    jsonToCSV,
+    testValidity
+} from "./codes";
 import cors from "cors";
 
 const app = express()
@@ -56,6 +66,40 @@ app.route(`/code/:post_id`)
         }
     })
 
+
+app.route(`/theme/:post_id`)
+    .post((req, res) => {
+        if (!isWorking.status) {
+            isWorking.status = true;
+            const response = addTheme(Number(req.params.post_id), req.body.themes);
+            if (response) {
+                res.send({isSuccess: true, payload: response});
+            } else {
+                res.send({isSuccess: false, error_code: 2, error_id: req.params.post_id});
+            }
+            isWorking.status = false;
+        } else {
+            res.send({isSuccess: false, error_code: 1});
+        }
+    })
+    .delete((req, res) => {
+        if (!isWorking.status) {
+            isWorking.status = true;
+            const response = deleteTheme(Number(req.params.post_id), req.body.themes);
+            if (response) {
+                res.send({isSuccess: true, payload: response});
+            } else {
+                res.send({isSuccess: false, error_code: 2, error_id: req.params.post_id});
+            }
+            isWorking.status = false;
+        } else {
+            res.send({isSuccess: false, error_code: 1});
+        }
+    })
+
+
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
+
+jsonToCSV();
