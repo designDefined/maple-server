@@ -26,6 +26,51 @@ export const addCode = (id, newCode, newTheme) => {
     return "error";
 }
 
+export const modifyCode = (post_id, code_id, newCode) => {
+    const index = data.findIndex((item) => item.post_id === post_id);
+    if (index < 0) {
+        return false;
+    } else {
+        // const themes = data[index].themes;
+        data[index].codes = data[index].codes.map((code) => {
+            if (code.code_id === code_id) {
+                return newCode
+            } else {
+                return code
+            }
+        });
+        // newTheme.forEach((themeToAdd) => {
+        //     if (
+        //         themes.findIndex((theme) => {
+        //             return theme.theme === themeToAdd.theme;
+        //         }) < 0) {
+        //         data[index].themes.push(themeToAdd);
+        //     }
+        // })
+        fs.writeFileSync('database/codes.json', JSON.stringify(data));
+        return data;
+    }
+    return "error";
+}
+
+export const addMultipleTheme = (targetArr) => {
+    const newData = data.map((datum) => {
+        if (targetArr.post_ids.includes(datum.post_id)) {
+            return datum.codes.map((code) => {
+                if (targetArr.code_ids.includes(code.code_id)) {
+                    return {...code, theme: targetArr.themes}
+                } else {
+                    return code
+                }
+            })
+        } else {
+            return datum
+        }
+    })
+    fs.writeFileSync('database/codes.json', JSON.stringify(newData));
+    return newData;
+}
+
 export const addTheme = (id, newTheme) => {
     const index = data.findIndex((item) => item.post_id === id);
     if (index < 0) {

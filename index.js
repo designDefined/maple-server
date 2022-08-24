@@ -4,13 +4,13 @@ import express from "express"
 import {listAll, listFromTo, test} from "./import";
 import {
     addCode,
-    addIdToAll,
+    addIdToAll, addMultipleTheme,
     addTheme,
     addValidity,
     checkCode,
     codeInit,
     customAll, deleteTheme,
-    jsonToCSV,
+    jsonToCSV, modifyCode,
     testValidity
 } from "./codes";
 import cors from "cors";
@@ -65,7 +65,35 @@ app.route(`/code/:post_id`)
             res.send({isSuccess: false, error_code: 1});
         }
     })
+    .put((req, res) => {
+        if (!isWorking.status) {
+            isWorking.status = true;
+            const response = modifyCode(Number(req.params.post_id), req.body.code_id, req.body.newCode);
+            if (response) {
+                res.send({isSuccess: true, payload: response});
+            } else {
+                res.send({isSuccess: false, error_code: 2, error_id: req.params.post_id});
+            }
+            isWorking.status = false;
+        } else {
+            res.send({isSuccess: false, error_code: 1});
+        }
+    })
 
+app.route(`/codes`).put((req, res) => {
+    if (!isWorking.status) {
+        isWorking.status = true;
+        const response = addMultipleTheme(req.body.targetArr);
+        if (response) {
+            res.send({isSuccess: true, payload: response});
+        } else {
+            res.send({isSuccess: false, error_code: 2, error_id: req.params.post_id});
+        }
+        isWorking.status = false;
+    } else {
+        res.send({isSuccess: false, error_code: 1});
+    }
+})
 
 app.route(`/theme/:post_id`)
     .post((req, res) => {
