@@ -3,7 +3,7 @@ import {original} from "./import";
 
 const dataBuffer = fs.readFileSync("database/codes.json");
 const dataJSON = dataBuffer.toString();
-const data = JSON.parse(dataJSON);
+let data = JSON.parse(dataJSON);
 
 export const addCode = (id, newCode, newTheme) => {
     const index = data.findIndex((item) => item.post_id === id);
@@ -56,19 +56,22 @@ export const modifyCode = (post_id, code_id, newCode) => {
 export const addMultipleTheme = (targetArr) => {
     const newData = data.map((datum) => {
         if (targetArr.post_ids.includes(datum.post_id)) {
-            return datum.codes.map((code) => {
-                if (targetArr.code_ids.includes(code.code_id)) {
-                    return {...code, theme: targetArr.themes}
-                } else {
-                    return code
-                }
-            })
+            return {
+                ...datum, codes: datum.codes.map((code) => {
+                    if (targetArr.code_ids.includes(code.code_id)) {
+                        return {...code, theme: targetArr.themes}
+                    } else {
+                        return code
+                    }
+                })
+            }
         } else {
             return datum
         }
-    })
-    fs.writeFileSync('database/codes.json', JSON.stringify(newData));
-    return newData;
+    });
+    data = newData;
+    fs.writeFileSync('database/codes.json', JSON.stringify(data));
+    return data;
 }
 
 export const addTheme = (id, newTheme) => {
